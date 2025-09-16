@@ -277,3 +277,29 @@ export function ApiGetOtherUserInfo() {
     }),
   );
 }
+
+export function ApiDeleteUser() {
+  return applyDecorators(
+    ApiOperation({
+      summary: '회원 탈퇴',
+      description:
+        '사용자 계정을 익명화(닉네임, 소셜 ID, 프로필 이미지 등 민감 정보 제거) 처리하여 탈퇴합니다.',
+    }),
+    ApiBearerAuth(),
+    ApiResponse({
+      status: 200,
+      description: '회원 탈퇴 성공',
+      schema: {
+        type: 'object',
+        properties: {
+          message: { type: 'string', example: '회원 탈퇴 성공!' },
+        },
+      },
+    }),
+    ApiResponse(
+      createErrorResponse('USER_001', '해당 사용자를 찾을 수 없습니다.', 404),
+    ),
+    ApiResponse(CommonAuthResponses.Unauthorized),
+    ApiResponse(CommonErrorResponses.InternalServerError),
+  );
+}

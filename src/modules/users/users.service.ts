@@ -192,6 +192,11 @@ export class UsersService {
     user.status = UserStatusType.DELETE;
     user.nickname = null;
     user.profileImage = null;
+    user.socialId = null;
+    user.socialNickname = null;
+    user.profileImage = null;
+    user.pushToken = null;
+    user.introduction = null;
 
     await this.userRepository.save(user);
 

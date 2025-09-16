@@ -373,28 +373,33 @@ export class PostsService {
 
       // 3. 챌린지 게시글인 경우 챗봇 알림 전송
       if (createVerifiedPostDto.challengeUuid) {
-        this.chatbotService.sendAuthCompletionMessage(
-          userUuid,
-          createVerifiedPostDto.challengeUuid,
-          savedPost.postUuid,
-        ).catch(error => {
-          console.error('챗봇 알림 전송 실패:', error);
-        });
+        this.chatbotService
+          .sendAuthCompletionMessage(
+            userUuid,
+            createVerifiedPostDto.challengeUuid,
+            savedPost.postUuid,
+          )
+          .catch((error) => {
+            console.error('챗봇 알림 전송 실패:', error);
+          });
 
         // 모든 참여자가 인증했는지 확인하고 축하 메시지 전송
-        this.chatbotService.checkAllParticipantsAuthenticated(
-          createVerifiedPostDto.challengeUuid,
-        ).then(allAuthenticated => {
-          if (allAuthenticated) {
-            this.chatbotService.sendGroupCompletionMessage(
-              createVerifiedPostDto.challengeUuid,
-            ).catch(error => {
-              console.error('그룹 완료 메시지 전송 실패:', error);
-            });
-          }
-        }).catch(error => {
-          console.error('참여자 인증 상태 확인 실패:', error);
-        });
+        this.chatbotService
+          .checkAllParticipantsAuthenticated(
+            createVerifiedPostDto.challengeUuid,
+          )
+          .then((allAuthenticated) => {
+            if (allAuthenticated) {
+              this.chatbotService
+                .sendGroupCompletionMessage(createVerifiedPostDto.challengeUuid)
+                .catch((error) => {
+                  console.error('그룹 완료 메시지 전송 실패:', error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error('참여자 인증 상태 확인 실패:', error);
+          });
       }
 
       return {
@@ -462,28 +467,31 @@ export class PostsService {
 
     // 챌린지 게시글인 경우 챗봇 알림 전송
     if (dto.challengeUuid) {
-      this.chatbotService.sendAuthCompletionMessage(
-        userUuid,
-        dto.challengeUuid,
-        newPost.postUuid,
-      ).catch(error => {
-        console.error('챗봇 알림 전송 실패:', error);
-      });
+      this.chatbotService
+        .sendAuthCompletionMessage(
+          userUuid,
+          dto.challengeUuid,
+          newPost.postUuid,
+        )
+        .catch((error) => {
+          console.error('챗봇 알림 전송 실패:', error);
+        });
 
       // 모든 참여자가 인증했는지 확인하고 축하 메시지 전송
-      this.chatbotService.checkAllParticipantsAuthenticated(
-        dto.challengeUuid,
-      ).then(allAuthenticated => {
-        if (allAuthenticated) {
-          this.chatbotService.sendGroupCompletionMessage(
-            dto.challengeUuid,
-          ).catch(error => {
-            console.error('그룹 완료 메시지 전송 실패:', error);
-          });
-        }
-      }).catch(error => {
-        console.error('참여자 인증 상태 확인 실패:', error);
-      });
+      this.chatbotService
+        .checkAllParticipantsAuthenticated(dto.challengeUuid)
+        .then((allAuthenticated) => {
+          if (allAuthenticated) {
+            this.chatbotService
+              .sendGroupCompletionMessage(dto.challengeUuid)
+              .catch((error) => {
+                console.error('그룹 완료 메시지 전송 실패:', error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error('참여자 인증 상태 확인 실패:', error);
+        });
     }
 
     return {
