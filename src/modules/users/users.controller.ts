@@ -17,6 +17,7 @@ import {
   ApiLogout,
   ApiOnboarding,
   ApiGetOtherUserInfo,
+  ApiDeleteUser,
 } from './decorators/users.swagger';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { OnBoardingDto } from './dto/onBoarding.dto';
@@ -53,6 +54,7 @@ export class UsersController {
     return this.usersService.updateProfile(UserUuid, updateProfileDto);
   }
 
+  @ApiDeleteUser()
   @Delete('member')
   @UseGuards(JwtAuthGuard)
   async deleteAccount(@UserUuid() UserUuid: string) {
