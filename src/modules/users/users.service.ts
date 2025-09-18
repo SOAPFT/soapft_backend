@@ -193,7 +193,6 @@ export class UsersService {
     user.nickname = null;
     user.profileImage = null;
     user.socialId = null;
-    user.socialNickname = null;
     user.profileImage = null;
     user.pushToken = null;
     user.introduction = null;
