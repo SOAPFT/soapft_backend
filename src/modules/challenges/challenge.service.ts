@@ -428,7 +428,6 @@ export class ChallengeService {
   /**
    * 인기 챌린지 목록
    */
-
   async getPopularChallenges() {
     const challenges = await this.challengeRepository
       .createQueryBuilder('challenge')
@@ -437,6 +436,18 @@ export class ChallengeService {
       .orderBy('CARDINALITY(challenge.participantUuid)', 'DESC')
       .limit(15)
       .getMany();
+
+    // 15개가 안되면 기간 조건을 제거하고 다시 조회
+    if (challenges.length < 15) {
+      const allChallenges = await this.challengeRepository
+        .createQueryBuilder('challenge')
+        .addSelect('CARDINALITY(challenge.participantUuid)', 'participantCount')
+        .orderBy('CARDINALITY(challenge.participantUuid)', 'DESC')
+        .limit(15)
+        .getMany();
+
+      return allChallenges;
+    }
 
     return challenges;
   }
