@@ -1,0 +1,406 @@
+asyncapi: 2.6.0
+info:
+  title: SOAPFT Chat WebSocket API
+  version: 1.0.0
+  description: |
+    실시간 채팅 WebSocket API 문서
+    - 1:1 채팅 및 그룹 채팅 지원
+    - 실시간 메시지 전송/수신
+    - 타이핑 상태 표시
+    - 메시지 읽음 처리
+
+servers:
+  development:
+    url: ws://localhost:3000/chat
+    protocol: ws
+    description: 개발 환경
+  production:
+    url: wss://api.soapft.com/chat
+    protocol: wss
+    description: 운영 환경
+
+channels:
+  connected:
+    description: 웹소켓 연결 성공
+    subscribe:
+      summary: 연결 성공 메시지 수신
+      message:
+        $ref: '#/components/messages/ConnectedMessage'
+
+  sendMessage:
+    description: 메시지 전송
+    publish:
+      summary: 클라이언트가 서버로 메시지 전송
+      message:
+        $ref: '#/components/messages/SendMessage'
+
+  newMessage:
+    description: 새 메시지 수신
+    subscribe:
+      summary: 서버로부터 새 메시지 수신
+      message:
+        $ref: '#/components/messages/NewMessage'
+
+  joinRoom:
+    description: 채팅방 입장
+    publish:
+      summary: 채팅방 입장 요청
+      message:
+        $ref: '#/components/messages/JoinRoom'
+    subscribe:
+      summary: 채팅방 입장 완료
+      message:
+        $ref: '#/components/messages/JoinedRoom'
+
+  leaveRoom:
+    description: 채팅방 나가기
+    publish:
+      summary: 채팅방 나가기 요청
+      message:
+        $ref: '#/components/messages/LeaveRoom'
+    subscribe:
+      summary: 채팅방 나가기 완료
+      message:
+        $ref: '#/components/messages/LeftRoom'
+
+  markAsRead:
+    description: 메시지 읽음 처리
+    publish:
+      summary: 메시지 읽음 처리 요청
+      message:
+        $ref: '#/components/messages/MarkAsRead'
+    subscribe:
+      summary: 메시지 읽음 알림 수신
+      message:
+        $ref: '#/components/messages/MessagesRead'
+
+  typing:
+    description: 타이핑 상태
+    publish:
+      summary: 타이핑 상태 전송
+      message:
+        $ref: '#/components/messages/Typing'
+    subscribe:
+      summary: 다른 사용자의 타이핑 상태 수신
+      message:
+        $ref: '#/components/messages/UserTyping'
+
+  systemMessage:
+    description: 시스템 메시지
+    subscribe:
+      summary: 시스템 메시지 수신
+      message:
+        $ref: '#/components/messages/SystemMessage'
+
+  notification:
+    description: 알림
+    subscribe:
+      summary: 알림 수신
+      message:
+        $ref: '#/components/messages/Notification'
+
+  error:
+    description: 에러 메시지
+    subscribe:
+      summary: 에러 메시지 수신
+      message:
+        $ref: '#/components/messages/Error'
+
+components:
+  messages:
+    ConnectedMessage:
+      name: ConnectedMessage
+      title: 연결 성공 메시지
+      summary: 웹소켓 연결 성공 시 수신
+      payload:
+        type: object
+        properties:
+          message:
+            type: string
+            description: 연결 성공 메시지
+            example: '채팅 서버에 연결되었습니다.'
+          userUuid:
+            type: string
+            description: 사용자 UUID
+            example: '01HF8XABCDEFGHIJKLMNOPQRST'
+
+    SendMessage:
+      name: SendMessage
+      title: 메시지 전송
+      summary: 클라이언트가 서버로 메시지 전송
+      payload:
+        type: object
+        required:
+          - roomUuid
+          - message
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+          message:
+            type: object
+            required:
+              - type
+              - content
+            properties:
+              type:
+                type: string
+                enum: [TEXT, IMAGE, SYSTEM]
+                description: 메시지 타입
+                example: TEXT
+              content:
+                type: string
+                maxLength: 1000
+                description: 메시지 내용
+                example: '안녕하세요! 오늘 운동 어떠셨나요?'
+              imageUrl:
+                type: string
+                description: 이미지 URL (이미지 타입인 경우)
+                example: 'https://soapft-bucket.s3.amazonaws.com/images/chat.jpg'
+
+    NewMessage:
+      name: NewMessage
+      title: 새 메시지
+      summary: 서버로부터 새 메시지 수신
+      payload:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: 메시지 ID
+            example: 1
+          messageUuid:
+            type: string
+            description: 메시지 UUID
+            example: '01HF8XMSGABCDEFGHIJKLMNOP'
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+          senderUuid:
+            type: string
+            description: 발신자 UUID
+            example: '01HF8XABCDEFGHIJKLMNOPQRST'
+          senderNickname:
+            type: string
+            description: 발신자 닉네임
+            example: '운동러버'
+          type:
+            type: string
+            enum: [TEXT, IMAGE, SYSTEM]
+            description: 메시지 타입
+            example: TEXT
+          content:
+            type: string
+            description: 메시지 내용
+            example: '안녕하세요!'
+          imageUrl:
+            type: string
+            description: 이미지 URL
+          isRead:
+            type: boolean
+            description: 읽음 여부
+            example: false
+          createdAt:
+            type: string
+            format: date-time
+            description: 생성 시간
+            example: '2025-01-15T10:30:00Z'
+
+    JoinRoom:
+      name: JoinRoom
+      title: 채팅방 입장 요청
+      summary: 채팅방 입장 요청
+      payload:
+        type: object
+        required:
+          - roomUuid
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+
+    JoinedRoom:
+      name: JoinedRoom
+      title: 채팅방 입장 완료
+      summary: 채팅방 입장 완료
+      payload:
+        type: object
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+
+    LeaveRoom:
+      name: LeaveRoom
+      title: 채팅방 나가기 요청
+      summary: 채팅방 나가기 요청
+      payload:
+        type: object
+        required:
+          - roomUuid
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+
+    LeftRoom:
+      name: LeftRoom
+      title: 채팅방 나가기 완료
+      summary: 채팅방 나가기 완료
+      payload:
+        type: object
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+
+    MarkAsRead:
+      name: MarkAsRead
+      title: 메시지 읽음 처리 요청
+      summary: 메시지 읽음 처리 요청
+      payload:
+        type: object
+        required:
+          - roomUuid
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+
+    MessagesRead:
+      name: MessagesRead
+      title: 메시지 읽음 알림
+      summary: 다른 사용자에게 읽음 상태 전송
+      payload:
+        type: object
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+          userUuid:
+            type: string
+            description: 읽은 사용자 UUID
+            example: '01HF8XABCDEFGHIJKLMNOPQRST'
+          timestamp:
+            type: string
+            format: date-time
+            description: 읽은 시간
+            example: '2025-01-15T10:30:00Z'
+
+    Typing:
+      name: Typing
+      title: 타이핑 상태 전송
+      summary: 타이핑 상태 전송
+      payload:
+        type: object
+        required:
+          - roomUuid
+          - isTyping
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+          isTyping:
+            type: boolean
+            description: 타이핑 중 여부
+            example: true
+
+    UserTyping:
+      name: UserTyping
+      title: 타이핑 상태 수신
+      summary: 다른 사용자의 타이핑 상태 수신
+      payload:
+        type: object
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+          userUuid:
+            type: string
+            description: 타이핑 중인 사용자 UUID
+            example: '01HF8XABCDEFGHIJKLMNOPQRST'
+          nickname:
+            type: string
+            description: 타이핑 중인 사용자 닉네임
+            example: '운동러버'
+          isTyping:
+            type: boolean
+            description: 타이핑 중 여부
+            example: true
+
+    SystemMessage:
+      name: SystemMessage
+      title: 시스템 메시지
+      summary: 시스템 메시지 수신
+      payload:
+        type: object
+        properties:
+          roomUuid:
+            type: string
+            description: 채팅방 UUID
+            example: '01HF8XYZABCDEFGHIJKLMNOPQR'
+          message:
+            type: string
+            description: 시스템 메시지 내용
+            example: '새로운 사용자가 참여했습니다.'
+          timestamp:
+            type: string
+            format: date-time
+            description: 메시지 시간
+            example: '2025-01-15T10:30:00Z'
+
+    Notification:
+      name: Notification
+      title: 알림
+      summary: 사용자 알림 수신
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            enum: [info, warning, error]
+            description: 알림 타입
+            example: info
+          message:
+            type: string
+            description: 알림 메시지
+            example: '새로운 메시지가 도착했습니다.'
+          data:
+            type: object
+            description: 추가 데이터
+
+    Error:
+      name: Error
+      title: 에러 메시지
+      summary: 에러 메시지 수신
+      payload:
+        type: object
+        properties:
+          message:
+            type: string
+            description: 에러 메시지
+            example: '메시지 전송에 실패했습니다.'
+          error:
+            type: string
+            description: 에러 상세
+            example: '채팅방을 찾을 수 없습니다.'
+
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT 토큰을 사용한 인증
+        - WebSocket 연결 시 handshake.auth.token 또는 headers.authorization에 토큰 전달
+        - 형식: Bearer {token}
