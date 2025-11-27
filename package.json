@@ -44,9 +44,7 @@
     "db:sync": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register ./scripts/db-sync.ts",
     "db:sync:prod": "cross-env NODE_ENV=production node dist/scripts/db-sync.js",
     "db:refresh": "npm run db:drop && npm run db:create && npm run db:sync && npm run db:seed",
-    "db:refresh:prod": "npm run db:drop:prod && npm run db:create:prod && npm run db:sync:prod && npm run db:seed:prod",
-    "asyncapi:studio": "echo '\n📡 WebSocket API 문서를 확인하려면 https://studio.asyncapi.com 에서\n   backend/asyncapi.yaml 파일을 업로드하세요.\n'",
-    "asyncapi:validate": "npx -y @asyncapi/cli validate asyncapi.yaml"
+    "db:refresh:prod": "npm run db:drop:prod && npm run db:create:prod && npm run db:sync:prod && npm run db:seed:prod"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.844.0",
@@ -101,7 +99,6 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "@asyncapi/generator": "^2.8.3",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
