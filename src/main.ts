@@ -90,10 +90,6 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') ?? 7777;
   await app.listen(port);
   console.log(`💧SOAPFT ${port}번 포트에서 실행중입니다.`);
-  console.log(`📖 REST API 문서: http://localhost:${port}/api/docs`);
-  console.log(
-    `📡 WebSocket API 문서: https://studio.asyncapi.com (backend/asyncapi.yaml)`,
-  );
 
   if (module.hot) {
     module.hot.accept();
