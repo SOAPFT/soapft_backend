@@ -252,7 +252,7 @@ export class MissionService {
   }
 
   // 참여 취소
-  async cancelParticipation(userUuid: string, missionId: number) {
+  async cancelParticipation(userUuid: string, missionId: string) {
     const participation = await this.participationRepo.findOne({
       where: { userUuid, missionId },
     });

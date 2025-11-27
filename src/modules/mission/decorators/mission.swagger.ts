@@ -52,7 +52,7 @@ export function ApiUpdateMission() {
       summary: '미션 수정',
       description: '기존 미션 정보를 수정합니다.',
     }),
-    ApiParam({ name: 'id', description: '미션 ID', example: 1 }),
+    ApiParam({ name: 'id', description: '미션 ID', example: '1' }),
     ApiBody({
       type: UpdateMissionDto,
       examples: {
@@ -76,7 +76,7 @@ export function ApiDeleteMission() {
       summary: '미션 삭제',
       description: '특정 미션을 삭제합니다.',
     }),
-    ApiParam({ name: 'id', description: '미션 ID', example: 1 }),
+    ApiParam({ name: 'id', description: '미션 ID', example: '1' }),
     ApiResponse({ status: 200, description: '삭제 성공' }),
     ApiResponse({ status: 404, description: '미션을 찾을 수 없음' }),
   );
@@ -88,14 +88,14 @@ export function ApiGetMissionDetail() {
       summary: '미션 상세 조회',
       description: '미션 상세 정보와 사용자 랭킹 정보를 함께 반환합니다.',
     }),
-    ApiParam({ name: 'id', description: '미션 ID', example: 1 }),
+    ApiParam({ name: 'id', description: '미션 ID', example: '1' }),
     ApiResponse({
       status: 200,
       description: '조회 성공',
       schema: {
         example: {
           mission: {
-            id: 5,
+            id: '5',
             title: '8월 운동 미션',
             description: '하루동안 칼로리 많이 소모하기',
             type: 'calories',
@@ -159,7 +159,7 @@ export function ApiParticipateMission() {
       summary: '미션 참여',
       description: '사용자가 특정 미션에 참여합니다.',
     }),
-    ApiParam({ name: 'missionId', description: '미션 ID', example: 1 }),
+    ApiParam({ name: 'missionId', description: '미션 ID', example: '1' }),
     ApiResponse({ status: 201, description: '참여 성공' }),
     ApiResponse({ status: 404, description: '미션 또는 사용자 정보 없음' }),
   );
@@ -175,7 +175,7 @@ export function ApiSubmitMissionResult() {
     ApiParam({
       name: 'missionId',
       description: '미션 ID',
-      example: 1,
+      example: '1',
     }),
     ApiBody({
       schema: {
@@ -196,8 +196,8 @@ export function ApiSubmitMissionResult() {
       description: '제출 성공',
       schema: {
         example: {
-          id: 123,
-          missionId: 1,
+          id: '123',
+          missionId: '1',
           userUuid: '01JYKVN18MCW5B9FZ1PP7T14XS',
           resultData: 120,
           completed: true,
@@ -215,7 +215,7 @@ export function ApiSubmitMissionResult() {
           errorCode: 'NOT_FOUND',
           message: '해당 미션에 참여한 기록이 없습니다.',
           timestamp: '2025-09-03T12:35:10.000Z',
-          details: { missionId: 1 },
+          details: { missionId: '1' },
         },
       },
     }),
@@ -228,7 +228,7 @@ export function ApiSubmitMissionResult() {
           errorCode: 'CHALLENGE_NOT_STARTED',
           message: '아직 미션이 시작되지 않았습니다.',
           timestamp: '2025-09-03T12:35:10.000Z',
-          details: { missionId: 1, startTime: '2025-09-10T00:00:00.000Z' },
+          details: { missionId: '1', startTime: '2025-09-10T00:00:00.000Z' },
         },
       },
     }),
@@ -241,7 +241,7 @@ export function ApiSubmitMissionResult() {
           errorCode: 'CHALLENGE_ALREADY_FINISHED',
           message: '챌린지가 이미 종료되었습니다.',
           timestamp: '2025-09-03T12:35:10.000Z',
-          details: { missionId: 1, endTime: '2025-09-01T23:59:59.000Z' },
+          details: { missionId: '1', endTime: '2025-09-01T23:59:59.000Z' },
         },
       },
     }),
@@ -264,7 +264,7 @@ export function ApiCancelMissionParticipation() {
       summary: '미션 참여 취소',
       description: '사용자가 참여했던 미션을 취소합니다.',
     }),
-    ApiParam({ name: 'id', description: '미션 ID', example: 1 }),
+    ApiParam({ name: 'id', description: '미션 ID', example: '1' }),
     ApiResponse({ status: 200, description: '참여 취소 성공' }),
     ApiResponse({ status: 404, description: '참여 기록 없음' }),
   );

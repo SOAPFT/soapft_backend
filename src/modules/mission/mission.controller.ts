@@ -106,7 +106,7 @@ export class MissionController {
   @UseGuards(JwtAuthGuard)
   @ApiCancelMissionParticipation()
   async cancelParticipation(
-    @Param('id', ParseIntPipe) missionId: number,
+    @Param('id') missionId: string,
     @UserUuid() userUuid: string,
   ) {
     return this.missionService.cancelParticipation(userUuid, missionId);
